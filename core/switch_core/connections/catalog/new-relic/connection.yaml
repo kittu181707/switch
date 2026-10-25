@@ -1,7 +1,47 @@
 slug: new-relic
 name: New Relic
 category: Observability
-description: Query New Relic telemetry and alerts.
-enabled: false
+description: Query New Relic telemetry, alerts and entities, with your key.
+enabled: true
+adapter: api_key
 auth:
   type: api_key
+  refresh: none
+  api_key:
+    fields:
+      - name: api_key
+        label: User API key
+        secret: true
+        help: User Settings, API keys. Must be a User key (NRAK-...), not an Ingest or REST key.
+      - name: site
+        label: New Relic site
+        secret: false
+        help: The region of your New Relic account.
+        choices:
+          - newrelic.com
+          - eu.newrelic.com
+          - jp.newrelic.com
+    # Checks the User API key against NerdGraph, New Relic's GraphQL API.
+    # An organization administrator must enable MCP in Feature Control Manager.
+    identity:
+      method: POST
+      url: "https://api.{site}/graphql"
+      headers:
+        API-Key: "{api_key}"
+        Content-Type: "application/json"
+      body:
+        query: "{ actor { user { id email } } }"
+      account_id: data.actor.user.id
+      label: data.actor.user.email
+    help_url: https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/
+# A key does not expire; each issue hands it out for an hour, so the grant is
+# checked again at least hourly.
+token: { kind: pass_through, max_lifetime: 3600 }
+mcp:
+  servers:
+    # New Relic's remote MCP server takes the user API key in the api-key header.
+    - name: new-relic
+      url: "https://mcp.{site}/mcp"
+      headers:
+        api-key: "{api_key}"
+tools: { mode: pass_through }
