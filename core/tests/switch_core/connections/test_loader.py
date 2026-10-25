@@ -261,7 +261,6 @@ def test_the_shipped_gitlab_entry_signs_in_as_the_spike_found_it_must():
     assert definition.access is not None and definition.access.write is not None
     assert definition.access.read.scopes == ["mcp"]
     assert definition.access.write.scopes == ["mcp"]
-    assert "mcp" in (definition.access.write.scopes or [])
 
 
 @pytest.fixture

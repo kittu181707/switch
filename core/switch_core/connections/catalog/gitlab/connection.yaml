@@ -1,12 +1,12 @@
 slug: gitlab
 name: GitLab
-category: Code repository
+category: Source control
 description: Read and update GitLab projects, issues, merge requests and pipelines, as you.
 enabled: true
 adapter: oauth
 auth:
   type: oauth
-  # Measured token lifetime of 2 hours (7200 seconds) with rotating refresh tokens.
+  # GitLab OAuth access tokens expire after 2 hours (7200 seconds) with rotating refresh tokens.
   refresh: rotating
   oauth:
     # GitLab.com supports Dynamic Client Registration (RFC 7591):
