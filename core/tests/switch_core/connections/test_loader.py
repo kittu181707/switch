@@ -258,11 +258,9 @@ def test_the_shipped_gitlab_entry_signs_in_as_the_spike_found_it_must():
     assert [(s.name, s.url) for s in definition.mcp.servers] == [
         ("gitlab", "https://gitlab.com/api/v4/mcp")
     ]
-    assert definition.mcp.servers[0].url == "https://gitlab.com/api/v4/mcp"
     assert definition.access is not None and definition.access.write is not None
     assert definition.access.read.scopes == ["mcp"]
     assert definition.access.write.scopes == ["mcp"]
-    assert "mcp" in (definition.access.read.scopes or [])
     assert "mcp" in (definition.access.write.scopes or [])
 
 
