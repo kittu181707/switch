@@ -12,7 +12,6 @@ from switch_core.connections.loader import (
 
 PLACEHOLDERS = {
     "asana",
-    "gitlab",
     "bitbucket",
     "microsoft-365",
     "new-relic",
@@ -25,12 +24,13 @@ PLACEHOLDERS = {
 }
 
 
-def test_shipped_catalog_enables_github_airtable_atlassian_datadog_and_google_workspace():
+def test_shipped_catalog_enables_github_airtable_atlassian_datadog_gitlab_and_google_workspace():
     assert set(CATALOG) == PLACEHOLDERS | {
         "github",
         "airtable",
         "atlassian",
         "datadog",
+        "gitlab",
         "google-workspace",
     }
     assert [slug for slug, entry in CATALOG.items() if entry.definition.enabled] == [
@@ -38,12 +38,14 @@ def test_shipped_catalog_enables_github_airtable_atlassian_datadog_and_google_wo
         "atlassian",
         "datadog",
         "github",
+        "gitlab",
         "google-workspace",
     ]
     assert all(not CATALOG[slug].skill_files for slug in PLACEHOLDERS)
     assert "SKILL.md" in CATALOG["github"].skill_files
     assert "SKILL.md" in CATALOG["airtable"].skill_files
     assert "SKILL.md" in CATALOG["atlassian"].skill_files
+    assert "SKILL.md" in CATALOG["gitlab"].skill_files
     assert "SKILL.md" in CATALOG["google-workspace"].skill_files
 
 
@@ -224,6 +226,44 @@ def test_the_shipped_airtable_entry_signs_in_as_the_spike_found_it_must():
     assert definition.auth.identity is not None
     assert definition.auth.identity.url == "https://api.airtable.com/v0/meta/whoami"
     assert definition.auth.identity.account_id == "id"
+
+
+def test_the_shipped_gitlab_entry_signs_in_as_the_spike_found_it_must():
+    definition = CATALOG["gitlab"].definition
+    oauth = definition.auth.oauth
+    assert oauth is not None
+    assert definition.adapter == "oauth"
+    assert oauth.registration == "dynamic"
+    assert oauth.redirect == ["loopback"]
+    assert oauth.loopback_ports is not None and oauth.loopback_ports == [
+        39231,
+        39232,
+        39233,
+        39234,
+        39235,
+    ]
+    assert oauth.prompt == "consent"
+    assert oauth.revocation_discovered is True
+    assert definition.auth.refresh == "rotating"
+    assert definition.auth.identity is not None
+    assert definition.auth.identity.url == "https://gitlab.com/oauth/token/info"
+    assert definition.auth.identity.account_id == "resource_owner_id"
+    assert definition.auth.identity.label == "resource_owner_id"
+    assert definition.token is not None
+    assert (definition.token.kind, definition.token.max_lifetime) == (
+        "pass_through",
+        7200,
+    )
+    assert definition.mcp is not None
+    assert [(s.name, s.url) for s in definition.mcp.servers] == [
+        ("gitlab", "https://gitlab.com/api/v4/mcp")
+    ]
+    assert definition.mcp.servers[0].url == "https://gitlab.com/api/v4/mcp"
+    assert definition.access is not None and definition.access.write is not None
+    assert definition.access.read.scopes == ["mcp"]
+    assert definition.access.write.scopes == ["mcp"]
+    assert "mcp" in (definition.access.read.scopes or [])
+    assert "mcp" in (definition.access.write.scopes or [])
 
 
 @pytest.fixture
