@@ -19,6 +19,7 @@ auth:
     url: https://api.notion.com/v1/users/me
     account_id: id
     label: name
+# Notion access tokens are refreshed using rotating refresh tokens; max lifetime defaults to 1 day (86400 seconds).
 token: { kind: pass_through, max_lifetime: 86400 }
 mcp:
   servers:
