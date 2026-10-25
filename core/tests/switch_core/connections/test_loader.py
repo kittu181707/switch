@@ -16,7 +16,6 @@ PLACEHOLDERS = {
     "bitbucket",
     "microsoft-365",
     "new-relic",
-    "notion",
     "linear",
     "salesforce",
     "box",
@@ -32,6 +31,7 @@ def test_shipped_catalog_enables_github_airtable_atlassian_datadog_and_google_wo
         "atlassian",
         "datadog",
         "google-workspace",
+        "notion",
     }
     assert [slug for slug, entry in CATALOG.items() if entry.definition.enabled] == [
         "airtable",
@@ -39,12 +39,14 @@ def test_shipped_catalog_enables_github_airtable_atlassian_datadog_and_google_wo
         "datadog",
         "github",
         "google-workspace",
+        "notion",
     ]
     assert all(not CATALOG[slug].skill_files for slug in PLACEHOLDERS)
     assert "SKILL.md" in CATALOG["github"].skill_files
     assert "SKILL.md" in CATALOG["airtable"].skill_files
     assert "SKILL.md" in CATALOG["atlassian"].skill_files
     assert "SKILL.md" in CATALOG["google-workspace"].skill_files
+    assert "SKILL.md" in CATALOG["notion"].skill_files
 
 
 GOOGLE = "https://www.googleapis.com/auth/"
@@ -172,6 +174,43 @@ def test_the_shipped_atlassian_entry_signs_in_as_the_spike_found_it_must():
     assert not any(":rovo:" in scope or ":twg" in scope for scope in every)
     assert definition.auth.identity is not None
     assert definition.auth.identity.url == "https://api.atlassian.com/me"
+
+
+def test_the_shipped_notion_entry_signs_in_as_the_spike_found_it_must():
+    definition = CATALOG["notion"].definition
+    oauth = definition.auth.oauth
+    assert oauth is not None
+    assert (definition.adapter, oauth.registration, oauth.redirect) == (
+        "oauth",
+        "dynamic",
+        ["loopback"],
+    )
+    assert oauth.loopback_ports is not None and oauth.loopback_ports == [
+        39231,
+        39232,
+        39233,
+        39234,
+        39235,
+    ]
+    assert oauth.prompt == "consent"
+    assert oauth.revocation_discovered is True
+    assert definition.auth.refresh == "rotating"
+    assert definition.token is not None
+    assert (definition.token.kind, definition.token.max_lifetime) == (
+        "pass_through",
+        86400,
+    )
+    assert definition.mcp is not None
+    assert [(s.name, s.url) for s in definition.mcp.servers] == [
+        ("notion", "https://mcp.notion.com/mcp")
+    ]
+    assert definition.access is not None and definition.access.write is not None
+    assert definition.access.read.scopes == ["default"]
+    assert definition.access.write.scopes == ["default"]
+    assert definition.auth.identity is not None
+    assert definition.auth.identity.url == "https://api.notion.com/v1/users/me"
+    assert definition.auth.identity.account_id == "id"
+    assert definition.auth.identity.label == "name"
 
 
 def test_the_shipped_airtable_entry_signs_in_as_the_spike_found_it_must():
