@@ -41,7 +41,7 @@ mcp:
   servers:
     # New Relic's remote MCP server takes the user API key in the api-key header.
     - name: new-relic
-      url: "https://mcp.{site}/mcp"
+      url: "https://mcp.{site}/mcp/"
       headers:
         api-key: "{api_key}"
 tools: { mode: pass_through }

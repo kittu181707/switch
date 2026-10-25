@@ -954,7 +954,7 @@ def test_the_shipped_new_relic_entry_puts_its_key_in_its_mcp_headers():
     ]
     assert definition.mcp is not None
     [server] = definition.mcp.servers
-    assert server.url == "https://mcp.{site}/mcp"
+    assert server.url == "https://mcp.{site}/mcp/"
     assert server.headers == {"api-key": "{api_key}"}
     assert sign_in.identity.method == "POST"
     assert sign_in.identity.url == "https://api.{site}/graphql"
