@@ -43,9 +43,8 @@ Your owner granted this agent their GitLab connection. Its tools are on the
 
 ## Rate limits & administration
 
-- GitLab.com enforces rate limits on MCP and API requests (for example, 60
-  calls/minute on the Free tier). Keep queries focused, fetch only what you need,
-  honor any `Retry-After` delay when rate-limited, and avoid aggressive polling or
-  unnecessary bulk requests.
-- If a tool reports that MCP access is disabled, a GitLab administrator or group
-  owner must enable MCP access in Group or Project Settings.
+- GitLab rate-limits MCP requests, with lower limits on Free plans. Keep
+  queries focused, fetch only what you need, honor any `Retry-After` delay when
+  rate-limited, and avoid aggressive polling or unnecessary bulk requests.
+- If a tool reports that MCP access is disabled, an administrator or group
+  owner must enable MCP access for the instance or group.
