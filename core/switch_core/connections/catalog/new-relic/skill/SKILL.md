@@ -30,7 +30,7 @@ How to work with it:
   rooms, and never reveal secrets or credentials you encounter.
 
 If a tool reports that MCP access is disabled, a New Relic administrator must
-enable MCP access in Feature Control Manager under Organization Settings. If a
-request is rejected with an authorization error, the connection does not have
+turn on key access for the MCP server under Administration, Feature Control. If
+a request is rejected with an authorization error, the connection does not have
 permission for that account or resource: explain the limitation rather than
 retrying repeatedly.

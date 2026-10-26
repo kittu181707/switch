@@ -22,7 +22,9 @@ auth:
           - eu.newrelic.com
           - jp.newrelic.com
     # Checks the User API key against NerdGraph, New Relic's GraphQL API.
-    # An organization administrator must enable MCP in Feature Control Manager.
+    # For the MCP server, an organization administrator must turn on the API
+    # Keys option under Administration, Feature Control (off by default). Some
+    # tools work only with OAuth.
     identity:
       method: POST
       url: "https://api.{site}/graphql"
